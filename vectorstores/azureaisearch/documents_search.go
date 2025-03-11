@@ -58,14 +58,14 @@ type SearchDocumentsRequestInput struct {
 	Select                string                              `json:"select,omitempty"`
 	Skip                  int                                 `json:"skip,omitempty"`
 	Top                   int                                 `json:"top,omitempty"`
-	Vectors               []SearchDocumentsRequestInputVector `json:"vectors,omitempty"`
+	VectorQueries               []SearchDocumentsRequestInputVector `json:"vectorQueries,omitempty"`
 	VectorFilterMode      string                              `json:"vectorFilterMode,omitempty"`
 }
 
 // SearchDocumentsRequestInputVector is the input struct for vector search.
 type SearchDocumentsRequestInputVector struct {
 	Kind       string    `json:"kind,omitempty"`
-	Value      []float32 `json:"value,omitempty"`
+	Vector      []float32 `json:"vector,omitempty"`
 	Fields     string    `json:"fields,omitempty"`
 	K          int       `json:"k,omitempty"`
 	Exhaustive bool      `json:"exhaustive,omitempty"`
@@ -74,15 +74,15 @@ type SearchDocumentsRequestInputVector struct {
 // SearchDocumentsRequestOuput is the output struct for search.
 type SearchDocumentsRequestOuput struct {
 	OdataCount   int `json:"@odata.count,omitempty"`
-	SearchFacets struct {
-		Category []struct {
-			Count int    `json:"count,omitempty"`
-			Value string `json:"value,omitempty"`
-		} `json:"category,omitempty"`
-	} `json:"@search.facets,omitempty"`
-	SearchNextPageParameters SearchDocumentsRequestInput `json:"@search.nextPageParameters,omitempty"`
+	// SearchFacets struct {
+	// 	Category []struct {
+	// 		Count int    `json:"count,omitempty"`
+	// 		Value string `json:"value,omitempty"`
+	// 	} `json:"category,omitempty"`
+	// } `json:"@search.facets,omitempty"`
+	// SearchNextPageParameters SearchDocumentsRequestInput `json:"@search.nextPageParameters,omitempty"`
 	Value                    []map[string]interface{}    `json:"value,omitempty"`
-	OdataNextLink            string                      `json:"@odata.nextLink,omitempty"`
+	// OdataNextLink            string                      `json:"@odata.nextLink,omitempty"`
 }
 
 // SearchDocuments send a request to azure AI search Rest API for searching documents.
@@ -92,7 +92,7 @@ func (s *Store) SearchDocuments(
 	payload SearchDocumentsRequestInput,
 	output *SearchDocumentsRequestOuput,
 ) error {
-	URL := fmt.Sprintf("%s/indexes/%s/docs/search?api-version=2023-07-01-Preview", s.azureAISearchEndpoint, indexName)
+	URL := fmt.Sprintf("%s/indexes/%s/docs/search?api-version=2024-11-01-preview", s.azureAISearchEndpoint, indexName)
 	body, err := json.Marshal(payload)
 	if err != nil {
 		return fmt.Errorf("err marshalling document for azure ai search: %w", err)
