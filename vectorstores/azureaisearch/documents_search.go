@@ -33,7 +33,8 @@ const (
 	SpellerTypeNone    SpellerType = "none"
 )
 
-type HybridSearch struct {
+// HybridSearchParams represents hybrid search parameters
+type HybridSearchParams struct {
 	MaxTextRecallSize int    `json:"maxTextRecallSize,omitempty"`
 	CountAndFacetMode string `json:"countAndFacetMode,omitempty"`
 }
@@ -71,25 +72,25 @@ type SearchDocumentsRequestInput struct {
 	Top                           int                                 `json:"top,omitempty"`
 	VectorQueries                 []SearchDocumentsRequestInputVector `json:"vectorQueries,omitempty"`
 	VectorFilterMode              string                              `json:"vectorFilterMode,omitempty"`
-	HybridSearch                  string                              `json:"hybridSearch,omitempty"`
+	HybridSearch                  HybridSearchParams                  `json:"hybridSearch,omitempty"`
 }
 
 // VectorQueryThreshold represents a threshold in vector queries
-type VectorQueryThreshold struct {
+type ThresholdParams struct {
 	Kind string `json:"kind,omitempty"`
 }
 
 // SearchDocumentsRequestInputVector is the input struct for vector search.
 type SearchDocumentsRequestInputVector struct {
-	Kind           string               `json:"kind,omitempty"`
-	Vector         []float32            `json:"vector,omitempty"`
-	Fields         string               `json:"fields,omitempty"`
-	K              int                  `json:"k,omitempty"`
-	Exhaustive     bool                 `json:"exhaustive,omitempty"`
-	Oversampling   int                  `json:"oversampling,omitempty"`
-	Weight         float32              `json:"weight,omitempty"`
-	Threshold      VectorQueryThreshold `json:"threshold,omitempty"`
-	FilterOverride string               `json:"filterOverride,omitempty"`
+	Kind           string          `json:"kind,omitempty"`
+	Vector         []float32       `json:"vector,omitempty"`
+	Fields         string          `json:"fields,omitempty"`
+	K              int             `json:"k,omitempty"`
+	Exhaustive     bool            `json:"exhaustive,omitempty"`
+	Oversampling   int             `json:"oversampling,omitempty"`
+	Weight         float32         `json:"weight,omitempty"`
+	Threshold      ThresholdParams `json:"threshold,omitempty"`
+	FilterOverride string          `json:"filterOverride,omitempty"`
 }
 
 // FacetResult represents a single facet result in search facets
@@ -121,61 +122,6 @@ type SearchDebug struct {
 		Text    QueryRewrite   `json:"text,omitempty"`
 		Vectors []QueryRewrite `json:"vectors,omitempty"`
 	} `json:"queryRewrites,omitempty"`
-}
-
-// VectorQuery represents a vector query in next page parameters
-type VectorQuery struct {
-	Kind           string               `json:"kind,omitempty"`
-	K              int                  `json:"k,omitempty"`
-	Fields         string               `json:"fields,omitempty"`
-	Exhaustive     bool                 `json:"exhaustive,omitempty"`
-	Oversampling   int                  `json:"oversampling,omitempty"`
-	Weight         float64              `json:"weight,omitempty"`
-	Threshold      VectorQueryThreshold `json:"threshold,omitempty"`
-	FilterOverride string               `json:"filterOverride,omitempty"`
-}
-
-// HybridSearchParams represents hybrid search parameters
-type HybridSearchParams struct {
-	MaxTextRecallSize int    `json:"maxTextRecallSize,omitempty"`
-	CountAndFacetMode string `json:"countAndFacetMode,omitempty"`
-}
-
-// SearchNextPageParameters represents next page parameters in search results
-type SearchNextPageParameters struct {
-	Count                         bool               `json:"count,omitempty"`
-	Facets                        []string           `json:"facets,omitempty"`
-	Filter                        string             `json:"filter,omitempty"`
-	Highlight                     string             `json:"highlight,omitempty"`
-	HighlightPostTag              string             `json:"highlightPostTag,omitempty"`
-	HighlightPreTag               string             `json:"highlightPreTag,omitempty"`
-	MinimumCoverage               float64            `json:"minimumCoverage,omitempty"`
-	Orderby                       string             `json:"orderby,omitempty"`
-	QueryType                     string             `json:"queryType,omitempty"`
-	ScoringStatistics             string             `json:"scoringStatistics,omitempty"`
-	SessionId                     string             `json:"sessionId,omitempty"`
-	ScoringParameters             []string           `json:"scoringParameters,omitempty"`
-	ScoringProfile                string             `json:"scoringProfile,omitempty"`
-	Debug                         string             `json:"debug,omitempty"`
-	Search                        string             `json:"search,omitempty"`
-	SearchFields                  string             `json:"searchFields,omitempty"`
-	SearchMode                    string             `json:"searchMode,omitempty"`
-	QueryLanguage                 string             `json:"queryLanguage,omitempty"`
-	Speller                       string             `json:"speller,omitempty"`
-	Select                        string             `json:"select,omitempty"`
-	Skip                          int                `json:"skip,omitempty"`
-	Top                           int                `json:"top,omitempty"`
-	SemanticConfiguration         string             `json:"semanticConfiguration,omitempty"`
-	SemanticErrorHandling         string             `json:"semanticErrorHandling,omitempty"`
-	SemanticMaxWaitInMilliseconds int                `json:"semanticMaxWaitInMilliseconds,omitempty"`
-	SemanticQuery                 string             `json:"semanticQuery,omitempty"`
-	Answers                       string             `json:"answers,omitempty"`
-	Captions                      string             `json:"captions,omitempty"`
-	QueryRewrites                 string             `json:"queryRewrites,omitempty"`
-	SemanticFields                string             `json:"semanticFields,omitempty"`
-	VectorQueries                 []VectorQuery      `json:"vectorQueries,omitempty"`
-	VectorFilterMode              string             `json:"vectorFilterMode,omitempty"`
-	HybridSearch                  HybridSearchParams `json:"hybridSearch,omitempty"`
 }
 
 // SearchCaption represents a caption in search results
@@ -255,7 +201,7 @@ func (s *Store) SearchDocuments(
 	payload SearchDocumentsRequestInput,
 	output *SearchDocumentsRequestOuput,
 ) error {
-	URL := fmt.Sprintf("%s//indexes('%s')//docs/search.post.search?api-version=2025-03-01-preview", s.azureAISearchEndpoint, indexName)
+	URL := fmt.Sprintf("%s/indexes('%s')/docs/search.post.search?api-version=2025-03-01-preview", s.azureAISearchEndpoint, indexName)
 	body, err := json.Marshal(payload)
 	if err != nil {
 		return fmt.Errorf("err marshalling document for azure ai search: %w", err)
