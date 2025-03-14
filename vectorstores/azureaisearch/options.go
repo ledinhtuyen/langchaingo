@@ -75,6 +75,12 @@ func WithAPIKey(azureAISearchAPIKey string) Option {
 	}
 }
 
+func WithEndpoint(azureAISearchEndpoint string) Option {
+	return func(s *Store) {
+		s.azureAISearchEndpoint = azureAISearchEndpoint
+	}
+}
+
 func applyClientOptions(s *Store, opts ...Option) error {
 	for _, opt := range opts {
 		opt(s)
